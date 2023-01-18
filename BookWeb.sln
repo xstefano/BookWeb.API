@@ -1,0 +1,30 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.4.33213.308
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BookWeb.API", "BookWeb.API\BookWeb.API.csproj", "{3176F0F7-90C3-44C3-98C8-03E84D711F9F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{0104A62E-7A9F-44A7-9D83-7F45489F35E4}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{3176F0F7-90C3-44C3-98C8-03E84D711F9F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3176F0F7-90C3-44C3-98C8-03E84D711F9F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3176F0F7-90C3-44C3-98C8-03E84D711F9F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3176F0F7-90C3-44C3-98C8-03E84D711F9F}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{3176F0F7-90C3-44C3-98C8-03E84D711F9F} = {0104A62E-7A9F-44A7-9D83-7F45489F35E4}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {6314072E-D99C-4251-9C03-35BB87229677}
+	EndGlobalSection
+EndGlobal
