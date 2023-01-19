@@ -19,50 +19,52 @@ namespace BookWeb.API.Services
                                        .ToListAsync();
         }
 
-        public async Task<Cart?> GetByUserIdAsync(string userId)
+        public async Task<Cart?> GetByUserNameAsync(string userName)
         {
             return await _context.Carts.Include(cart => cart.Items)        
-                                       .FirstOrDefaultAsync(user => user.UserId == userId);
+                                       .FirstOrDefaultAsync(user => user.userName == userName);
         }
 
-        public async Task<Cart?> AddItemAsync(string userId, int bookId)
+        public async Task<Cart?> AddItemAsync(string userName, int bookId)
         {
-            var existingCart = await GetByUserIdAsync(userId);
+            var existingUser = await _context.Users.FirstOrDefaultAsync(user => user.UserName == userName);
+            var cart = await GetByUserNameAsync(existingUser.UserName);
 
-            if (existingCart == null)
+            if (existingUser != null)
             {
-                existingCart = await CreateNewCart(userId);
-
-                if (existingCart == null) return null;
-            }
-
-            var book = await _context.Books.FindAsync(bookId);
-            var item = existingCart.Items.FirstOrDefault(book => book.BookId == bookId);
-
-            if (item != null)
-            {
-                item.Quantity++;
-                item.TotalPrice = item.Quantity * item.UnitPrice;
-            }
-            else
-            {
-                existingCart.Items.Add(new CartItem()
+                if (cart == null)
                 {
-                    Quantity = 1,
-                    UnitPrice = book.UnitPrice,
-                    TotalPrice = book.UnitPrice,
-                    BookId = bookId,
-                });
+                    cart = await CreateNewCart(userName);
+                }
+
+                var book = await _context.Books.FindAsync(bookId);
+                var item = cart.Items.FirstOrDefault(book => book.BookId == bookId);
+
+                if (item != null)
+                {
+                    item.Quantity++;
+                    item.TotalPrice = item.Quantity * item.UnitPrice;
+                }
+                else
+                {
+                    cart.Items.Add(new CartItem()
+                    {
+                        Quantity = 1,
+                        UnitPrice = book.UnitPrice,
+                        TotalPrice = book.UnitPrice,
+                        BookId = bookId,
+                    });
+                }
+                _context.Carts.Update(cart);
+                await _context.SaveChangesAsync();
             }
-            _context.Carts.Update(existingCart);
-            await _context.SaveChangesAsync();
-            return existingCart;
+            return cart;
         }
 
         public async Task<Cart?> RemoveItemAsync(int cartId, int cartItemId)
         {
             var existingCart = await _context.Carts.Include(cart => cart.Items)
-                                           .FirstOrDefaultAsync(c => c.Id == cartId);
+                                                   .FirstOrDefaultAsync(c => c.Id == cartId);
 
             if (existingCart != null)
             {
@@ -79,9 +81,9 @@ namespace BookWeb.API.Services
             return existingCart;
         }
 
-        public async Task<Cart?> ClearCartAsync(string userId)
+        public async Task<Cart?> ClearCartAsync(string userName)
         {
-            var existingCart = await GetByUserIdAsync(userId);
+            var existingCart = await GetByUserNameAsync(userName);
 
             if (existingCart != null)
             {
@@ -93,15 +95,15 @@ namespace BookWeb.API.Services
             return existingCart;
         }
 
-        private async Task<Cart?> CreateNewCart(string userId)
+        private async Task<Cart?> CreateNewCart(string userName)
         {
-            var existingUser = await _context.Users.FindAsync(userId);
+            var cart = await GetByUserNameAsync(userName);
 
-            if (existingUser != null)
+            if (cart == null)
             {
                 var newCart = new Cart
                 {
-                    UserId = userId
+                    userName = userName
                 };
                 await _context.Carts.AddAsync(newCart);
                 await _context.SaveChangesAsync();

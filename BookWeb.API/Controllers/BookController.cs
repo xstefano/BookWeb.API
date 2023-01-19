@@ -1,11 +1,13 @@
 ﻿using BookWeb.API.Interfaces;
 using BookWeb.API.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BookWeb.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class BookController : ControllerBase
     {
         private readonly IBookService _bookService;
@@ -18,6 +20,7 @@ namespace BookWeb.API.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = UserRoles.User)]
         public async Task<ActionResult<IEnumerable<Book>>> GetAll()
         {
             try
@@ -34,6 +37,7 @@ namespace BookWeb.API.Controllers
         }
 
         [HttpGet("{id}")]
+        [Authorize(Roles = UserRoles.User)]
         public async Task<ActionResult<Cart>> GetById(int id)
         {
             var book = await _bookService.GetByIdAsync(id);
@@ -49,6 +53,7 @@ namespace BookWeb.API.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = UserRoles.Admin)]
         public async Task<ActionResult<Book>> Add(Book book)
         {
             try
@@ -67,6 +72,7 @@ namespace BookWeb.API.Controllers
         }
 
         [HttpPut]
+        [Authorize(Roles = UserRoles.Admin)]
         public async Task<ActionResult> Update(Book book)
         {
             try
@@ -85,6 +91,7 @@ namespace BookWeb.API.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = UserRoles.Admin)]
         public async Task<IActionResult> Delete(int id)
         {
             try

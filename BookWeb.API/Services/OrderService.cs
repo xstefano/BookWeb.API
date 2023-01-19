@@ -13,11 +13,11 @@ namespace BookWeb.API.Services
             _context = context;
         }
 
-        public async Task<IEnumerable<Order>> GetAllByUserIdAsync(string userId)
+        public async Task<IEnumerable<Order>> GetAllByUserNameAsync(string userName)
         {
             return await _context.Orders
                                  .Include(order => order.Items)
-                                 .Where(user => user.UserId == userId)
+                                 .Where(user => user.UserName == userName)
                                  .ToListAsync();
         }
 
@@ -27,34 +27,36 @@ namespace BookWeb.API.Services
                                         .FirstOrDefaultAsync(order => order.Id == id);
         }
 
-        public async Task<Order> CreateOrderAsync(string userId)
+        public async Task<Order> CreateOrderAsync(string userName)
         {
             var cart = await _context.Carts.Include(cart => cart.Items)
-                                           .FirstOrDefaultAsync(user => user.UserId == userId);
+                                           .FirstOrDefaultAsync(user => user.userName == userName);
             var order = new Order();
             
             if (cart != null)
             {
-                order.UserId = userId;
-                order.TotalPrice = cart.Items.Sum(i => i.TotalPrice);
-
-                foreach (var item in cart.Items)
+                if (cart.Items.Count() > 0)
                 {
-                    var orderItem = new OrderItem
-                    {
-                        Quantity = item.Quantity,
-                        UnitPrice = item.UnitPrice,
-                        TotalPrice = item.TotalPrice,
-                        BookId = item.BookId,
-                    };
-                    order.Items.Add(orderItem);
-                    _context.OrderItems.Add(orderItem);
-                }
+                    order.UserName = userName;
+                    order.TotalPrice = cart.Items.Sum(i => i.TotalPrice);
 
-                _context.Orders.Add(order);
-                cart.Items.Clear();
-                _context.Carts.Update(cart);
-                await _context.SaveChangesAsync();
+                    foreach (var item in cart.Items)
+                    {
+                        var orderItem = new OrderItem
+                        {
+                            Quantity = item.Quantity,
+                            UnitPrice = item.UnitPrice,
+                            TotalPrice = item.TotalPrice,
+                            BookId = item.BookId,
+                        };
+                        order.Items.Add(orderItem);
+                        _context.OrderItems.Add(orderItem);
+                    }
+                    _context.Orders.Add(order);
+                    cart.Items.Clear();
+                    _context.Carts.Update(cart);
+                    await _context.SaveChangesAsync();
+                } 
             }
             return order;
         }

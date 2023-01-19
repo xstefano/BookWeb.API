@@ -1,5 +1,6 @@
 ﻿using BookWeb.API.Interfaces;
 using BookWeb.API.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BookWeb.API.Controllers
@@ -17,13 +18,14 @@ namespace BookWeb.API.Controllers
             _response = new Response();
         }
 
-        [HttpGet()]
+        [HttpGet]
         [Route("GetOrders/{userId}")]
-        public async Task<ActionResult<IEnumerable<Order>>> GetAllByUserId(string userId)
+        [Authorize(Roles = UserRoles.User)]
+        public async Task<ActionResult<IEnumerable<Order>>> GetAllByUserName(string userId)
         {
             try
             {
-                _response.Result = await _orderService.GetAllByUserIdAsync(userId);
+                _response.Result = await _orderService.GetAllByUserNameAsync(userId);
                 _response.DisplayMessage = "Order List";
             }
             catch (Exception ex)
@@ -34,40 +36,30 @@ namespace BookWeb.API.Controllers
             return Ok(_response);
         }
 
-        [HttpGet()]
-        [Route("GetOrder/{Id}")]
+        [HttpGet("{id}")]
+        [Authorize(Roles = UserRoles.User)]
         public async Task<ActionResult<Order>> GetById(int id)
         {
             var order = await _orderService.GetByIdAsync(id);
-            try
+            if (order == null)
             {
-                if (order != null)
-                {
-                    _response.Result = order;
-                    _response.DisplayMessage = "Order Information";
-                    return Ok(_response);
-                }
                 _response.IsSuccess = false;
                 _response.DisplayMessage = "Order does not exist";
-                return BadRequest(_response);
+                return NotFound(_response);
             }
-            catch (Exception ex)
-            {
-                _response.IsSuccess = false;
-                _response.DisplayMessage = "Error while saving the record";
-                _response.ErrorMessages = new List<string> { ex.ToString() };
-                return BadRequest(_response);
-            }
-            
+            _response.Result = order;
+            _response.DisplayMessage = "Order Information";
+            return Ok(_response);
         }
 
-        [HttpPost()]
-        [Route("create/{userId}")]
-        public async Task<ActionResult<Order>> Create(string userId)
+        [HttpPost]
+        [Route("create/{userName}")]
+        [Authorize(Roles = UserRoles.User)]
+        public async Task<ActionResult<Order>> Create(string userName)
         {
             try
             {
-                var newOrder = await _orderService.CreateOrderAsync(userId);
+                var newOrder = await _orderService.CreateOrderAsync(userName);
                 _response.Result = newOrder;
                 return Ok(newOrder);
             }

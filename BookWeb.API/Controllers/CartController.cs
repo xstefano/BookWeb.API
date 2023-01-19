@@ -1,11 +1,14 @@
 ﻿using BookWeb.API.Interfaces;
 using BookWeb.API.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Data;
 
 namespace BookWeb.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class CartController : ControllerBase
     {
         private readonly ICartService _cartService;
@@ -19,6 +22,7 @@ namespace BookWeb.API.Controllers
 
         [HttpGet]
         [Route("GetCarts")]
+        [Authorize(Roles = UserRoles.User)]
         public async Task<ActionResult<IEnumerable<Cart>>> GetAll()
         {
             try
@@ -35,10 +39,11 @@ namespace BookWeb.API.Controllers
         }
 
         [HttpGet]
-        [Route("GetCart/{userId}")]
-        public async Task<ActionResult<Cart>> GetCartByUserId(string userId)
+        [Route("GetCart/{userName}")]
+        [Authorize(Roles = UserRoles.User)]
+        public async Task<ActionResult<Cart>> GetCartByUserName(string userName)
         {
-            var existingCart = await _cartService.GetByUserIdAsync(userId);
+            var existingCart = await _cartService.GetByUserNameAsync(userName);
             if (existingCart == null)
             {
                 _response.IsSuccess = false;
@@ -51,12 +56,13 @@ namespace BookWeb.API.Controllers
         }
 
         [HttpPost]
-        [Route("{userId}/AddItem/{bookId}")]
-        public async Task<ActionResult<Cart>> AddItem(string userId, int bookId)
+        [Route("{userName}/AddItem/{bookId}")]
+        [Authorize(Roles = UserRoles.User)]
+        public async Task<ActionResult<Cart>> AddItem(string userName, int bookId)
         {
             try
             {
-                var cart = await _cartService.AddItemAsync(userId, bookId);
+                var cart = await _cartService.AddItemAsync(userName, bookId);
 
                 if (cart == null)
                 {
@@ -81,6 +87,7 @@ namespace BookWeb.API.Controllers
 
         [HttpDelete]
         [Route("{cartId}/RemoveItem/{cartItemId}")]
+        [Authorize(Roles = UserRoles.User)]
         public async Task<ActionResult<Cart>> RemoveItem(int cartId, int cartItemId)
         {
             try
@@ -107,10 +114,11 @@ namespace BookWeb.API.Controllers
         }
 
         [HttpDelete]
-        [Route("ClearCart/{userId}")]
-        public async Task<ActionResult<Cart>> ClearCart(string userId)
+        [Route("ClearCart/{userName}")]
+        [Authorize(Roles = UserRoles.User)]
+        public async Task<ActionResult<Cart>> ClearCart(string userName)
         {
-            var cart = await _cartService.ClearCartAsync(userId);
+            var cart = await _cartService.ClearCartAsync(userName);
 
             if (cart == null)
             {

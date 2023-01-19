@@ -4,8 +4,8 @@ namespace BookWeb.API.Interfaces
 {
     public interface IOrderService
     {
-        Task<IEnumerable<Order>> GetAllByUserIdAsync(string userId);
+        Task<IEnumerable<Order>> GetAllByUserNameAsync(string userName);
         Task<Order?> GetByIdAsync(int id);
-        Task<Order> CreateOrderAsync(string userId);
+        Task<Order> CreateOrderAsync(string userName);
     }
 }
