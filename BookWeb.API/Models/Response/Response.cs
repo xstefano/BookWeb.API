@@ -1,4 +1,4 @@
-﻿namespace BookWeb.API.Models
+﻿namespace BookWeb.API.Models.Response
 {
     public class Response
     {

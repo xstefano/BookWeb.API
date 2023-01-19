@@ -1,4 +1,4 @@
-﻿namespace BookWeb.API.Models
+﻿namespace BookWeb.API.Models.Auth
 {
     public static class UserRoles
     {

@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace BookWeb.API.Models
+namespace BookWeb.API.Models.Auth
 {
     public class Login
     {

@@ -1,5 +1,7 @@
 ﻿using BookWeb.API.Interfaces;
 using BookWeb.API.Models;
+using BookWeb.API.Models.Auth;
+using BookWeb.API.Models.Response;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
